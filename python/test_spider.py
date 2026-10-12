@@ -13,6 +13,7 @@ from spider import (
     _is_report_title,
     _matches_year,
     normalize_report_type,
+    normalize_stock_code,
     supported_report_types,
 )
 
@@ -61,6 +62,13 @@ def test_supported_report_types_keys():
         "q3",
         "prospectus",
     }
+
+
+@pytest.mark.parametrize("stock_code", ["", "  ", "０００００１", "000001​"])
+def test_normalize_stock_code_rejects_empty_and_unicode_digits(stock_code):
+    """Only six ASCII digits are valid, including at Unicode boundaries."""
+    with pytest.raises(ValueError, match="six ASCII digits"):
+        normalize_stock_code(stock_code)
 
 
 # ---------------------------------------------------------------------------
